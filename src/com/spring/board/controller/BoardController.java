@@ -101,13 +101,34 @@ public class BoardController {
 	public String boardUpdate(@PathVariable("boardTitle")String boardTitle, 
 							  @PathVariable("boardComment")String boardComment, Model model)throws Exception{
 		
+		System.out.println("boardComment + boardTitle->" + boardComment + boardTitle);
+		
 		BoardVo boardVo = new BoardVo();
 		boardVo.setBoardComment(boardComment);
 		boardVo.setBoardTitle(boardTitle);
 		
-		System.out.println(boardComment + boardTitle);
 		model.addAttribute("board", boardVo);
 		return "board/boardUpdate";
+	}
+	
+	@RequestMapping(value = "/board/boardUpdateAction.do", method = RequestMethod.POST)
+	@ResponseBody
+	public String boardUpdateAction(BoardVo boardVo) throws Exception{
+		
+		System.out.println("boardVo.getBoardTitle()->" + boardVo.getBoardTitle());
+		System.out.println("boardVo.getBoardComment()->" + boardVo.getBoardComment());
+		
+		HashMap<String, String> result = new HashMap<String, String>();
+		CommonUtil commonUtil = new CommonUtil();
+		
+		int resultCnt = boardService.boardUpdate(boardVo);
+		
+		result.put("success", (resultCnt > 0)?"Y":"N");
+		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
+		
+		System.out.println("callbackMsg::"+callbackMsg);
+		
+		return callbackMsg;
 	}
 	
 }

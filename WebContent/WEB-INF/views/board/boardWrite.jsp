@@ -42,6 +42,11 @@
 <form class="boardWrite">
 	<table align="center">
 		<tr>
+			<td align="right">
+			<input id="submit" type="button" value="ÀÛ¼º">
+			</td>
+		</tr>
+		<tr>
 			<td>
 				<table border ="1"> 
 					<tr>

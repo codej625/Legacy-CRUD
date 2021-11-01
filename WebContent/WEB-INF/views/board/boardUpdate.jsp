@@ -5,44 +5,77 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>boardView</title>
+<title>boardUpdate</title>
 </head>
+<script type="text/javascript">
+
+	$j(document).ready(function(){
+		
+		$j("#submit").on("click",function(){
+			var $frm = $j('.boardUpdate :input');
+			var param = $frm.serialize();
+			
+			$j.ajax({
+			    url : "/board/boardUpdateAction.do",
+			    dataType: "json",
+			    type: "POST",
+			    data : param,
+			    success: function(data, textStatus, jqXHR)
+			    {
+					alert("작성완료");
+					
+					alert("메세지:"+data.success);
+					
+					location.href = "/board/boardList.do";
+			    },
+			    error: function (jqXHR, textStatus, errorThrown)
+			    {
+			    	alert("실패");
+			    }
+			});
+		});
+	});
+	
+
+</script>
 <body>
-<table align="center">
-	<tr>
-		<td>
-			<table border ="1">
-				<tr>
-					<td width="120" align="center">
-					Title
-					</td>
-					<td width="400">
-					<input type="text" name="" value="${board.boardTitle}">
-					</td>
-				</tr>
-				<tr>
-					<td height="300" align="center">
-					Comment
-					</td>
-					<td>
-					<input type="text" name="" value="${board.boardComment}">
-					</td>
-				</tr>
-				<tr>
-					<td align="center">
-					Writer
-					</td>
-					<td>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td align="right">
-			<a href="/board/boardList.do">List</a> <a href="/board/boardList.do">Update</a>
-		</td>
-	</tr>
-</table>	
+<form class="boardUpdate">
+	<table align="center">
+		<tr>
+			<td>
+				<table border ="1">
+					<tr>
+						<td width="120" align="center">
+						Title
+						</td>
+						<td width="400">
+						<input type="text" name="boardTitle" size="50" value="${board.boardTitle}">
+						</td>
+					</tr>
+					<tr>
+						<td height="300" align="center">
+						Comment
+						</td>
+						<td valign="top">
+						<textarea name="boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td align="center">
+						Writer
+						</td>
+						<td>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">
+				<a href="/board/boardList.do">List</a> <a id="submit">Update</a>
+			</td>
+		</tr>
+	</table>
+</form>	
 </body>
 </html>

@@ -75,4 +75,13 @@
         ,TO_CHAR(SYSDATE)
         )
     </select>
+    
+    <update id="boardUpdate" parameterType="com.spring.board.vo.BoardVo">
+    	UPDATE 
+    	BOARD SET 
+		   BOARD_TITLE = #{boardTitle}
+		  ,BOARD_COMMENT = #{boardComment}
+    	WHERE BOARD_TYPE = 'A' AND BOARD_NUM = 1
+<!--     	WHERE BOARD_TYPE = #{} AND BOARD_NUM = #{} -->
+    </update>
 </mapper>
