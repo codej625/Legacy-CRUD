@@ -48,7 +48,20 @@
 		</tr>
 		<tr>
 			<td>
-				<table border ="1"> 
+				<table border ="1">
+					<tr>
+						<td width="120" align="center">
+							Type
+						</td>
+						<td>
+							<select name="boardType">
+								<option value="a01">일반</option>
+								<option value="a02">Q&A</option>
+								<option value="a03">익명</option>
+								<option value="a04">자유</option>
+							</select>
+						</td>	
+					</tr>
 					<tr>
 						<td width="120" align="center">
 						Title

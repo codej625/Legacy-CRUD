@@ -11,6 +11,22 @@
 
 	$j(document).ready(function(){
 	});
+	
+	$j(document).on('click','.del-chk',function(){
+	    if($j('input[class=del-chk]:checked').length == $j('.del-chk').length){
+	    	$j('#chk_all').prop('checked',true);
+	    }else{
+	    	$j('#chk_all').prop('checked',false);
+	    }
+	});
+	
+	$j(document).on('click','#chk_all',function(){
+	    if($j('#chk_all').is(':checked')){
+	       $j('.del-chk').prop('checked',true);
+	    }else{
+	       $j('.del-chk').prop('checked',false);
+	    }
+	});
 
 </script>
 <body>
@@ -53,6 +69,16 @@
 	<tr>
 		<td align="right">
 			<a href ="/board/boardWrite.do?pageNo=${pageNo}">글쓰기</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="left">
+			<input type="checkbox" id="chk_all"                         >전체
+			<input type="checkbox" name="code_name" class="del-chk" value="a01">일반
+			<input type="checkbox" name="code_name" class="del-chk" value="a02">Q&A
+			<input type="checkbox" name="code_name" class="del-chk" value="a03">익명
+			<input type="checkbox" name="code_name" class="del-chk" value="a04">자유
+			<button onclick="">조회</button>
 		</td>
 	</tr>
 </table>	

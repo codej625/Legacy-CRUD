@@ -48,14 +48,16 @@
 
 <body>
 <form class="boardDelete">
-<table align="center">
+	<input type="hidden" name="boardNum" value="${board.boardNum}">
+	<input type="hidden" name="boardType" value="${boardType}">
+	<table align="center">
 		<tr>
 			<td align="right">
-			<input id="submit" type="button" value="삭제">
+				<input id="submit" type="button" value="삭제">
 			</td>
 		</tr>
-	<tr>
-		<td>
+		<tr>
+			<td>
 			<table border ="1">
 				<tr>
 					<td width="120" align="center">
@@ -86,11 +88,10 @@
 	<tr>
 		<td align="right">
 			<a href="/board/boardList.do">List</a> 
-			<a href="/board/${board.boardComment}/${board.boardTitle}/${pageNo}/${board.boardNum}/boardUpdate.do">Update</a>
+			<a href="/board/${board.boardComment}/${board.boardTitle}/${pageNo}/${board.boardNum}/${boardType}/boardUpdate.do">Update</a>
 		</td>
 	</tr>
 </table>
-<input type="hidden" name="boardNum" value="${board.boardNum}">
 </form>	
 </body>
 </html>

@@ -25,7 +25,6 @@ public class boardServiceImpl implements boardService{
 	@Override
 	public List<BoardVo> SelectBoardList(PageVo pageVo) throws Exception {
 		// TODO Auto-generated method stub
-		
 		return boardDao.selectBoardList(pageVo);
 	}
 	

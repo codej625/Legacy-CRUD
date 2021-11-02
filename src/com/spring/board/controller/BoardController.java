@@ -97,17 +97,20 @@ public class BoardController {
 		return callbackMsg;
 	}
 	
-	@RequestMapping(value = "/board/{boardComment}/{boardTitle}/{pageNo}/{boardNum}/boardUpdate.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/board/{boardComment}/{boardTitle}/{pageNo}/{boardNum}/{boardType}/boardUpdate.do", method = RequestMethod.GET)
 	public String boardUpdate(@PathVariable("boardTitle")String boardTitle, 
 							  @PathVariable("boardComment")String boardComment, 
 							  @PathVariable("pageNo")String pageNo, 
-							  @PathVariable("boardNum")int boardNum, Model model)throws Exception{
+							  @PathVariable("boardNum")int boardNum,
+							  @PathVariable("boardType")String boardType, Model model)throws Exception{
 		
+		System.out.println("test->" + boardType);
 		BoardVo boardVo = new BoardVo();
 		
 		boardVo.setBoardComment(boardComment);
 		boardVo.setBoardTitle(boardTitle);
 		boardVo.setBoardNum(boardNum);
+		boardVo.setBoardType(boardType);
 		
 		model.addAttribute("board", boardVo);
 		model.addAttribute("pageNo", pageNo);
