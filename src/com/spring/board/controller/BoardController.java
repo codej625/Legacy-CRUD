@@ -59,23 +59,23 @@ public class BoardController {
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
 	public String boardView(Locale locale, Model model
 			,@PathVariable("boardType")String boardType
-			,@PathVariable("boardNum")int boardNum) throws Exception{
+			,@PathVariable("boardNum")int boardNum, PageVo pageVo) throws Exception{
 		
 		BoardVo boardVo = new BoardVo();
-		
-		
+	
 		boardVo = boardService.selectBoard(boardType,boardNum);
 		
 		model.addAttribute("boardType", boardType);
-		model.addAttribute("boardNum", boardNum);
 		model.addAttribute("board", boardVo);
+		model.addAttribute("pageNo", pageVo.getPageNo());
 		
 		return "board/boardView";
 	}
 	
 	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
-	public String boardWrite(Locale locale, Model model) throws Exception{
+	public String boardWrite(Locale locale, Model model, PageVo pageVo) throws Exception{
 		
+		model.addAttribute("pageNo", pageVo.getPageNo());
 		
 		return "board/boardWrite";
 	}
@@ -90,24 +90,28 @@ public class BoardController {
 		int resultCnt = boardService.boardInsert(boardVo);
 		
 		result.put("success", (resultCnt > 0)?"Y":"N");
-		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
 		
+		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
 		System.out.println("callbackMsg::"+callbackMsg);
 		
 		return callbackMsg;
 	}
 	
-	@RequestMapping(value = "/board/{boardComment}/{boardTitle}/boardUpdate.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/board/{boardComment}/{boardTitle}/{pageNo}/{boardNum}/boardUpdate.do", method = RequestMethod.GET)
 	public String boardUpdate(@PathVariable("boardTitle")String boardTitle, 
-							  @PathVariable("boardComment")String boardComment, Model model)throws Exception{
-		
-		System.out.println("boardComment + boardTitle->" + boardComment + boardTitle);
+							  @PathVariable("boardComment")String boardComment, 
+							  @PathVariable("pageNo")String pageNo, 
+							  @PathVariable("boardNum")int boardNum, Model model)throws Exception{
 		
 		BoardVo boardVo = new BoardVo();
+		
 		boardVo.setBoardComment(boardComment);
 		boardVo.setBoardTitle(boardTitle);
+		boardVo.setBoardNum(boardNum);
 		
 		model.addAttribute("board", boardVo);
+		model.addAttribute("pageNo", pageNo);
+		
 		return "board/boardUpdate";
 	}
 	
@@ -115,20 +119,33 @@ public class BoardController {
 	@ResponseBody
 	public String boardUpdateAction(BoardVo boardVo) throws Exception{
 		
-		System.out.println("boardVo.getBoardTitle()->" + boardVo.getBoardTitle());
-		System.out.println("boardVo.getBoardComment()->" + boardVo.getBoardComment());
-		
 		HashMap<String, String> result = new HashMap<String, String>();
 		CommonUtil commonUtil = new CommonUtil();
 		
 		int resultCnt = boardService.boardUpdate(boardVo);
 		
 		result.put("success", (resultCnt > 0)?"Y":"N");
-		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
 		
+		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
 		System.out.println("callbackMsg::"+callbackMsg);
 		
 		return callbackMsg;
 	}
 	
+	@RequestMapping(value = "/board/boardDelete.do", method = RequestMethod.POST)
+	@ResponseBody
+	public String boardDelete(BoardVo boardVo) throws Exception{
+		
+		HashMap<String, String> result = new HashMap<String, String>();
+		CommonUtil commonUtil = new CommonUtil();
+		
+		int resultCnt = boardService.boardDelete(boardVo);
+		
+		result.put("success", (resultCnt > 0)?"Y":"N");
+		
+		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
+		System.out.println("callbackMsg::"+callbackMsg);
+		
+		return callbackMsg;
+	}
 }

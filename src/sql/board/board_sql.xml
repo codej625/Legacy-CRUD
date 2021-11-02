@@ -11,43 +11,42 @@
     
     <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
         SELECT 
-		  BOARD_TYPE
-		  ,BOARD_NUM
-		  ,BOARD_TITLE
-		  ,BOARD_COMMENT
-		  ,TOTAL_CNT
+		BOARD_TYPE
+		,BOARD_NUM
+		,BOARD_TITLE
+		,BOARD_COMMENT
+		,TOTAL_CNT
 		FROM 
 		(
-		  SELECT
-		      	BOARD_TYPE
-				,BOARD_NUM
-				,BOARD_TITLE
-				,BOARD_COMMENT
-		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-		      	,COUNT(*) OVER() AS TOTAL_CNT
-			FROM
-				BOARD	
+		SELECT
+		BOARD_TYPE
+		,BOARD_NUM
+		,BOARD_TITLE
+		,BOARD_COMMENT
+		,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		,COUNT(*) OVER() AS TOTAL_CNT
+		FROM BOARD	
 		)
-		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+		WHERE 
+		NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
     </select>
     
     <select id="boardTotal" parameterType="Integer" resultType="Integer">
 		  SELECT
-		      	COUNT(*) AS TOTAL_CNT
-			FROM
-				BOARD	
+		  COUNT(*) AS TOTAL_CNT
+		  FROM BOARD	
     </select>
     	
     <select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
     	SELECT
-        	BOARD_TYPE
-			,BOARD_NUM
-			,BOARD_TITLE
-			,BOARD_COMMENT
+        BOARD_TYPE
+		,BOARD_NUM
+		,BOARD_TITLE
+		,BOARD_COMMENT
 		FROM
-			BOARD
-    	WHERE 	BOARD_TYPE = #{boardType}
-    	AND 	BOARD_NUM  = #{boardNum}
+		BOARD
+    	WHERE BOARD_TYPE = #{boardType}
+    	AND   BOARD_NUM  = #{boardNum}
     </select>	
     
     <select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
@@ -78,10 +77,17 @@
     
     <update id="boardUpdate" parameterType="com.spring.board.vo.BoardVo">
     	UPDATE 
-    	BOARD SET 
-		   BOARD_TITLE = #{boardTitle}
-		  ,BOARD_COMMENT = #{boardComment}
-    	WHERE BOARD_TYPE = 'A' AND BOARD_NUM = 1
-<!--     	WHERE BOARD_TYPE = #{} AND BOARD_NUM = #{} -->
+    	BOARD SET
+		 BOARD_TITLE = #{boardTitle}
+		,BOARD_COMMENT = #{boardComment}
+    	WHERE BOARD_TYPE = '1' 
+   		AND   BOARD_NUM  = #{boardNum}  
     </update>
+    
+    <delete id="boardDelete" parameterType="com.spring.board.vo.BoardVo">
+    	DELETE
+    	FROM BOARD
+    	WHERE BOARD_TYPE = '1' 
+  		AND   BOARD_NUM  = #{boardNum}  
+    </delete>
 </mapper>

@@ -58,6 +58,12 @@ public class BoardDaoImpl implements BoardDao{
 		System.out.println("boardVo.getBoardComment()->" + boardVo.getBoardComment());
 		return sqlSession.update("board.boardUpdate", boardVo);
 	}
+	@Override
+	public int boardDelete(BoardVo boardVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardUpdate dao Start");
+		return sqlSession.delete("board.boardDelete", boardVo);
+	}
 	
 	
 }

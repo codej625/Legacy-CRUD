@@ -52,7 +52,7 @@
 	</tr>
 	<tr>
 		<td align="right">
-			<a href ="/board/boardWrite.do">글쓰기</a>
+			<a href ="/board/boardWrite.do?pageNo=${pageNo}">글쓰기</a>
 		</td>
 	</tr>
 </table>	

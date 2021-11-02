@@ -54,8 +54,16 @@ public class boardServiceImpl implements boardService{
 
 	@Override
 	public int boardUpdate(BoardVo boardVo) throws Exception {
+		// TODO Auto-generated method stub
 		System.out.println("boardUpdate service Start");
 		return boardDao.boardUpdate(boardVo);
+	}
+
+	@Override
+	public int boardDelete(BoardVo boardVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardDelete service Start");
+		return boardDao.boardDelete(boardVo);
 	}
 	
 }

@@ -26,7 +26,7 @@
 					
 					alert("¸Þ¼¼Áö:"+data.success);
 					
-					location.href = "/board/boardList.do?pageNo=";
+					location.href = "/board/boardList.do?pageNo=${pageNo}";
 			    },
 			    error: function (jqXHR, textStatus, errorThrown)
 			    {
@@ -54,7 +54,7 @@
 						Title
 						</td>
 						<td width="400">
-						<input name="boardTitle" type="text" size="50" value="${board.boardTitle}"> 
+						<input name="boardTitle" type="text" size="50"> 
 						</td>
 					</tr>
 					<tr>
@@ -62,7 +62,7 @@
 						Comment
 						</td>
 						<td valign="top">
-						<textarea name="boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
+						<textarea name="boardComment"  rows="20" cols="55"></textarea>
 						</td>
 					</tr>
 					<tr>

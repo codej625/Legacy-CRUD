@@ -22,11 +22,11 @@
 			    data : param,
 			    success: function(data, textStatus, jqXHR)
 			    {
-					alert("작성완료");
+					alert("수정 완료");
 					
 					alert("메세지:"+data.success);
 					
-					location.href = "/board/boardList.do";
+					location.href = "/board/boardList.do?pageNo=${pageNo}";
 			    },
 			    error: function (jqXHR, textStatus, errorThrown)
 			    {
@@ -76,6 +76,8 @@
 			</td>
 		</tr>
 	</table>
+<%-- <input type="hidden" name="pageNo" value="${pageNo}"> --%>
+<input type="hidden" name="boardNum" value="${board.boardNum}">
 </form>	
 </body>
 </html>

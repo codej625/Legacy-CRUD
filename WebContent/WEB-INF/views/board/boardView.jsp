@@ -7,8 +7,53 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>boardView</title>
 </head>
+
+<script type="text/javascript">
+
+	$j(document).ready(function(){
+		
+		$j("#submit").on("click",function(){
+			var result = confirm('게시글을 삭제하시겠습니까?');
+			if(result) {
+				var $frm = $j('.boardDelete :input');
+				var param = $frm.serialize();
+				
+				$j.ajax({
+				    url : "/board/boardDelete.do",
+				    dataType: "json",
+				    type: "POST",
+				    data : param,
+				    success: function(data, textStatus, jqXHR)
+				    {
+						alert("삭제완료");
+						
+						alert("메세지:"+data.success);
+						
+						location.href = "/board/boardList.do?pageNo=${pageNo}";
+				    },
+				    error: function (jqXHR, textStatus, errorThrown)
+				    {
+				    	alert("실패");
+				    }
+				});
+			} else { 
+				alert("삭제가 취소되었습니다.");
+			}
+		});
+	});
+	
+
+</script>
+
+
 <body>
+<form class="boardDelete">
 <table align="center">
+		<tr>
+			<td align="right">
+			<input id="submit" type="button" value="삭제">
+			</td>
+		</tr>
 	<tr>
 		<td>
 			<table border ="1">
@@ -40,9 +85,12 @@
 	</tr>
 	<tr>
 		<td align="right">
-			<a href="/board/boardList.do">List</a> <a href="/board/${board.boardComment}/${board.boardTitle}/boardUpdate.do">Update</a>
+			<a href="/board/boardList.do">List</a> 
+			<a href="/board/${board.boardComment}/${board.boardTitle}/${pageNo}/${board.boardNum}/boardUpdate.do">Update</a>
 		</td>
 	</tr>
-</table>	
+</table>
+<input type="hidden" name="boardNum" value="${board.boardNum}">
+</form>	
 </body>
 </html>
