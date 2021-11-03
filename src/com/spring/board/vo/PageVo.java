@@ -1,7 +1,7 @@
 package com.spring.board.vo;
 
 public class PageVo {
-	
+
 	private int pageNo = 0;
 
 	public int getPageNo() {
@@ -11,5 +11,5 @@ public class PageVo {
 	public void setPageNo(int pageNo) {
 		this.pageNo = pageNo;
 	}
-	
+
 }

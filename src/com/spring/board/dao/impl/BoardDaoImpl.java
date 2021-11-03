@@ -12,65 +12,67 @@ import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.PageVo;
 
 @Repository
-public class BoardDaoImpl implements BoardDao{
-	
+public class BoardDaoImpl implements BoardDao {
+
 	@Autowired
 	private SqlSession sqlSession;
-	
+
 	@Override
 	public String selectTest() throws Exception {
 		// TODO Auto-generated method stub
-		
+		System.out.println("selectTest dao Start");
+
 		String a = sqlSession.selectOne("board.boardList");
-		
+
 		return a;
 	}
-	/**
-	 * 
-	 * */
+
 	@Override
-	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception {
+	public List<BoardVo> selectBoardList(HashMap<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("board.boardList",pageVo);
+		System.out.println("selectBoardList dao Start");
+
+		return sqlSession.selectList("board.boardList", map);
 	}
-	
+
 	@Override
 	public int selectBoardCnt() throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("selectBoardCnt dao Start");
+
 		return sqlSession.selectOne("board.boardTotal");
 	}
-	
+
 	@Override
 	public BoardVo selectBoard(BoardVo boardVo) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("selectBoard dao Start");
+
 		return sqlSession.selectOne("board.boardView", boardVo);
 	}
-	
+
 	@Override
 	public int boardInsert(BoardVo boardVo) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("boardInsert dao Start");
+
 		return sqlSession.insert("board.boardInsert", boardVo);
 	}
+
 	@Override
 	public int boardUpdate(BoardVo boardVo) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("boardUpdate dao Start");
-		System.out.println("boardVo.getBoardTitle()->" + boardVo.getBoardTitle());
-		System.out.println("boardVo.getBoardComment()->" + boardVo.getBoardComment());
+
 		return sqlSession.update("board.boardUpdate", boardVo);
 	}
+
 	@Override
 	public int boardDelete(BoardVo boardVo) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("boardUpdate dao Start");
+		System.out.println("boardDelete dao Start");
+
 		return sqlSession.delete("board.boardDelete", boardVo);
 	}
-	@Override
-	public List<BoardVo> typeBoardList(HashMap<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("typeBoardList dao Start");
-		return sqlSession.selectList("board.typeBoardList", map);
-	}
-	
-	
+
 }

@@ -1,160 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="board">
-    
-    <resultMap type="com.spring.board.vo.BoardVo" id="boardVo">
-    	<result property="boardType" 	column="BOARD_TYPE"/>
-    	<result property="boardNum" 	column="BOARD_NUM"/>
-    	<result property="boardTitle" 	column="BOARD_TITLE"/>
-    	<result property="boardComment" column="BOARD_COMMENT"/>
-    </resultMap>
-    
-    <resultMap type="com.spring.board.vo.BoardVo" id="boardVo02">
-   		<result property="boardType"    column="CODE_NAME"/>
-    	<result property="boardNum" 	column="BOARD_NUM"/>
-    	<result property="boardTitle" 	column="BOARD_TITLE"/>
-    	<result property="boardComment" column="BOARD_COMMENT"/>
-    </resultMap>
-    
-    <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo02">
-    	SELECT 
-		  CODE_NAME
-		  ,BOARD_NUM
-		  ,BOARD_TITLE
-		  ,BOARD_COMMENT
-		  ,TOTAL_CNT
+
+	<resultMap type="com.spring.board.vo.BoardVo" id="boardVo">
+		<result property="boardType"    column="BOARD_TYPE" />
+		<result property="boardNum"     column="BOARD_NUM" />
+		<result property="boardTitle"   column="BOARD_TITLE" />
+		<result property="boardComment" column="BOARD_COMMENT" />
+	</resultMap>
+
+	<resultMap type="com.spring.board.vo.BoardVo" id="boardCom">
+		<result property="boardType"    column="CODE_NAME" />
+		<result property="boardNum"     column="BOARD_NUM" />
+		<result property="boardTitle"   column="BOARD_TITLE" />
+		<result property="boardComment" column="BOARD_COMMENT" />
+	</resultMap>
+
+	<select id="boardList" parameterType="hashmap" resultMap="boardCom">
+		SELECT
+		CODE_NAME
+		,BOARD_NUM
+		,BOARD_TITLE
+		,BOARD_COMMENT
+		,TOTAL_CNT
 		FROM
 		(
-		  SELECT
-		     CODE_NAME
-				,BOARD_NUM
-				,BOARD_TITLE
-				,BOARD_COMMENT
-		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-		      	,COUNT(*) OVER() AS TOTAL_CNT
-			FROM
-				BOARD A, COM_CODE B
-			WHERE
-				A.BOARD_TYPE = B.CODE_ID
-				AND code_id IN ('a01', 'a02','a03', 'a04')
-<!--         OR CODE_NAME = 'a04' -->
-<!--         OR CODE_NAME = 'a02' -->
+		SELECT
+		CODE_NAME
+		,BOARD_NUM
+		,BOARD_TITLE
+		,BOARD_COMMENT
+		,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		,COUNT(*) OVER() AS TOTAL_CNT
+		FROM
+		BOARD A, COM_CODE B
+		WHERE
+		A.BOARD_TYPE = B.CODE_ID
+		<if test=" boardType != '' and boardType != null ">
+			AND code_id IN
+			<foreach collection="boardType" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		)
+		<if test=" boardType == '' and boardType == null ">
+		</if>
 		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
-<!--         SELECT  -->
-<!-- 		BOARD_TYPE -->
-<!-- 		,BOARD_NUM -->
-<!-- 		,BOARD_TITLE -->
-<!-- 		,BOARD_COMMENT -->
-<!-- 		,TOTAL_CNT -->
-<!-- 		FROM  -->
-<!-- 		( -->
-<!-- 		SELECT -->
-<!-- 		BOARD_TYPE -->
-<!-- 		,BOARD_NUM -->
-<!-- 		,BOARD_TITLE -->
-<!-- 		,BOARD_COMMENT -->
-<!-- 		,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW -->
-<!-- 		,COUNT(*) OVER() AS TOTAL_CNT -->
-<!-- 		FROM BOARD	 -->
-<!-- 		) -->
-<!-- 		WHERE  -->
-<!-- 		NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10 -->
-    </select>
-    
-    <select id="boardTotal" parameterType="Integer" resultType="Integer">
-		  SELECT
-		  COUNT(*) AS TOTAL_CNT
-		  FROM BOARD	
-    </select>
-    	
-    <select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
-    	SELECT
-        BOARD_TYPE
+	</select>
+
+	<select id="boardTotal" parameterType="Integer" resultType="Integer">
+		SELECT
+		COUNT(*) AS TOTAL_CNT
+		FROM BOARD
+	</select>
+
+	<select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
+		SELECT
+		BOARD_TYPE
 		,BOARD_NUM
 		,BOARD_TITLE
 		,BOARD_COMMENT
 		FROM
 		BOARD
-    	WHERE BOARD_TYPE = #{boardType}
-    	AND   BOARD_NUM  = #{boardNum}
-    </select>	
-    
-    <select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
-        INSERT INTO 
-        BOARD
-        (BOARD_TYPE
-        ,BOARD_NUM
-        ,BOARD_TITLE
-        ,BOARD_COMMENT
-        ,CREATOR
-        ,CREATE_TIME
-        ,MODIFIER
-        ,MODIFIED_TIME
-        )
-        VALUES
-        (#{boardType}
-        <!-- NVL 특정값을 치환시킬때 사용되는 함수 -->
-        <!-- BOARD_NUM의 값이 처음에 NULL이기 때문에 값을 0으로 치환 -->
-        ,(SELECT NVL(MAX(BOARD_NUM),0)+1
-	    FROM BOARD
-	    WHERE BOARD_TYPE = #{boardType})
-        ,#{boardTitle}
-        ,#{boardComment}
-        ,'SYSTEM'
-        ,TO_CHAR(SYSDATE)
-        ,'SYSTEM'
-        ,TO_CHAR(SYSDATE)
-        )
-    </select>
-    
-    <update id="boardUpdate" parameterType="com.spring.board.vo.BoardVo">
-    	UPDATE 
-    	BOARD SET
-		 BOARD_TITLE     = #{boardTitle}
-		,BOARD_COMMENT   = #{boardComment}
-    	WHERE BOARD_TYPE = #{boardType} 
-   		AND   BOARD_NUM  = #{boardNum}  
-    </update>
-    
-    <delete id="boardDelete" parameterType="com.spring.board.vo.BoardVo">
-    	DELETE
-    	FROM BOARD
-    	WHERE BOARD_TYPE = #{boardType}
-  		AND   BOARD_NUM  = #{boardNum}  
-    </delete>
-    
-    <select id="typeBoardList" parameterType="hashmap" resultMap="boardVo02">
-    	SELECT 
-		  CODE_NAME
-		  ,BOARD_NUM
-		  ,BOARD_TITLE
-		  ,BOARD_COMMENT
-		  ,TOTAL_CNT
-		FROM
-		(
-		  SELECT
-		     CODE_NAME
-				,BOARD_NUM
-				,BOARD_TITLE
-				,BOARD_COMMENT
-		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-		      	,COUNT(*) OVER() AS TOTAL_CNT
-			FROM
-				BOARD A, COM_CODE B
-			WHERE
-				A.BOARD_TYPE = B.CODE_ID
-		<if test=" boardType != '' and boardType != null "> 
-				
-		AND code_id IN
-				
-        <foreach collection="boardType" item="item" index="index" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-		
-		</if>
+		WHERE BOARD_TYPE = #{boardType}
+		AND BOARD_NUM    = #{boardNum}
+	</select>
+
+	<select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
+		INSERT INTO
+		BOARD
+		(BOARD_TYPE
+		,BOARD_NUM
+		,BOARD_TITLE
+		,BOARD_COMMENT
+		,CREATOR
+		,CREATE_TIME
+		,MODIFIER
+		,MODIFIED_TIME
 		)
-		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
-    </select>
-    
+		VALUES
+		(#{boardType}
+		<!-- NVL 특정값을 치환시킬때 사용되는 함수 -->
+		<!-- BOARD_NUM의 값이 처음에 NULL이기 때문에 값을 0으로 치환 -->
+		,(SELECT NVL(MAX(BOARD_NUM),0)+1
+		FROM BOARD
+		WHERE BOARD_TYPE = #{boardType})
+		,#{boardTitle}
+		,#{boardComment}
+		,'SYSTEM'
+		,TO_CHAR(SYSDATE)
+		,'SYSTEM'
+		,TO_CHAR(SYSDATE)
+		)
+	</select>
+
+	<update id="boardUpdate" parameterType="com.spring.board.vo.BoardVo">
+		UPDATE
+		BOARD SET
+		BOARD_TITLE    = #{boardTitle}
+		,BOARD_COMMENT = #{boardComment}
+		WHERE 
+		BOARD_TYPE     = #{boardType}
+		AND BOARD_NUM  = #{boardNum}
+	</update>
+
+	<delete id="boardDelete" parameterType="com.spring.board.vo.BoardVo">
+		DELETE
+		FROM  BOARD
+		WHERE BOARD_TYPE = #{boardType}
+		AND   BOARD_NUM  = #{boardNum}
+	</delete>
+	
 </mapper>
