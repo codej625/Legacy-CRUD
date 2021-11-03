@@ -1,5 +1,6 @@
 package com.spring.board.dao.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -63,6 +64,12 @@ public class BoardDaoImpl implements BoardDao{
 		// TODO Auto-generated method stub
 		System.out.println("boardUpdate dao Start");
 		return sqlSession.delete("board.boardDelete", boardVo);
+	}
+	@Override
+	public List<BoardVo> typeBoardList(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("typeBoardList dao Start");
+		return sqlSession.selectList("board.typeBoardList", map);
 	}
 	
 	

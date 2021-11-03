@@ -12,6 +12,15 @@
 	$j(document).ready(function(){
 	});
 	
+// 	checkbox -> page 로딩시 check all 기능
+// 	$j(document).ready(function() {
+// 		$j('#chk_all').prop('checked',true);
+// 		 if($j('#chk_all').is(':checked')){
+// 		    $j('.del-chk').prop('checked',true);
+// 		 }
+// 	});
+	
+// 	checkbox -> .del-chk 전체 선택시 #chk_all까지 check
 	$j(document).on('click','.del-chk',function(){
 	    if($j('input[class=del-chk]:checked').length == $j('.del-chk').length){
 	    	$j('#chk_all').prop('checked',true);
@@ -20,6 +29,7 @@
 	    }
 	});
 	
+//  checkbox -> #chk_all(click) -> all checked 기능
 	$j(document).on('click','#chk_all',function(){
 	    if($j('#chk_all').is(':checked')){
 	       $j('.del-chk').prop('checked',true);
@@ -73,12 +83,14 @@
 	</tr>
 	<tr>
 		<td align="left">
-			<input type="checkbox" id="chk_all"                         >전체
-			<input type="checkbox" name="code_name" class="del-chk" value="a01">일반
-			<input type="checkbox" name="code_name" class="del-chk" value="a02">Q&A
-			<input type="checkbox" name="code_name" class="del-chk" value="a03">익명
-			<input type="checkbox" name="code_name" class="del-chk" value="a04">자유
-			<button onclick="">조회</button>
+			<form action="/board/boardTypeSelect.do" method="post">
+				<input type="checkbox" 					 id="chk_all"               	      >전체
+				<input type="checkbox" name="typeSelect" id="chk1" class="del-chk" value="a01" >일반
+				<input type="checkbox" name="typeSelect" id="chk2" class="del-chk" value="a02" >Q&A
+				<input type="checkbox" name="typeSelect" id="chk3" class="del-chk" value="a03" >익명
+				<input type="checkbox" name="typeSelect" id="chk" class="del-chk" value="a04" >자유
+				<input type="submit" value="조회">
+			</form>
 		</td>
 	</tr>
 </table>	

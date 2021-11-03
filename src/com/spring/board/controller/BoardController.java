@@ -43,7 +43,7 @@ public class BoardController {
 		int totalCnt = 0;
 		
 		if(pageVo.getPageNo() == 0){
-			pageVo.setPageNo(page);;
+			pageVo.setPageNo(page);
 		}
 		
 		boardList = boardService.SelectBoardList(pageVo);
@@ -62,7 +62,18 @@ public class BoardController {
 			,@PathVariable("boardNum")int boardNum, PageVo pageVo) throws Exception{
 		
 		BoardVo boardVo = new BoardVo();
-	
+		
+		// 조회버튼 사용시 Controller가 바뀌고 Mapper에서 설정해놓은 resultMap으로 인해 매칭 컬럼이 바뀌게 된다.
+		// 받아오는 boardType값은 code_name값으로 바뀌었기 때문에 값을 다시 변환해준다.
+		if(boardType.equals("일반"))  {
+			boardType = "a01";
+		}if(boardType.equals("Q&A")) {
+			boardType = "a02";
+		}if(boardType.equals("익명")) {
+			boardType = "a03";
+		}if(boardType.equals("자유")) {
+			boardType = "a04";       }
+		
 		boardVo = boardService.selectBoard(boardType,boardNum);
 		
 		model.addAttribute("boardType", boardType);
@@ -150,5 +161,53 @@ public class BoardController {
 		System.out.println("callbackMsg::"+callbackMsg);
 		
 		return callbackMsg;
+	}
+	
+	@RequestMapping(value = "/board/boardTypeSelect.do", method = RequestMethod.POST)
+	public String boardTypeSelect(Model model, PageVo pageVo, String typeSelect) throws Exception{
+		
+		List<BoardVo> boardList = new ArrayList<BoardVo>();
+		
+		// checkbox값을 typeSelect이라는 배열속에 받고 동적 쿼리문을 사용하기위해 Map을 만들어준다.
+		HashMap<String, Object> typePage = new HashMap<>();
+
+		int page = 1;
+		int totalCnt = 0;
+		
+		if(pageVo.getPageNo() == 0){
+			pageVo.setPageNo(page);
+		}
+		
+		// checkbox를 선택하지 않고 조회 버튼을 누를시 typeSelect값이 null이기 때문에 
+		// 조건문을 주어 전체조회 페이지로 리턴시킨다.
+		if(typeSelect == null) {
+			boardList = boardService.SelectBoardList(pageVo);
+			totalCnt  = boardService.selectBoardCnt();
+			
+			model.addAttribute("boardList", boardList);
+			model.addAttribute("totalCnt", totalCnt);
+			model.addAttribute("pageNo", page);
+			
+			return "board/boardList";
+		}
+		
+		// checkbox값이 정상적으로 받아졌다면 typeSelect의 값을 "," 기준으로 자르고 새로운 배열속에 넣는다.
+		String[] code_id = typeSelect.split(",");
+		
+		// 동적 쿼리를 작성하기 위해 배열과 필요한 값을 맵에 넣어준다.
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("boardType", code_id);
+		map.put("pageNo", pageVo.getPageNo());
+		
+		boardList = boardService.typeBoardList(map);
+		totalCnt  = boardService.selectBoardCnt();
+		
+		model.addAttribute("boardList", boardList);
+		model.addAttribute("totalCnt", totalCnt);
+		model.addAttribute("pageNo", page);
+		
+		return "board/boardList";
+		
+		
 	}
 }

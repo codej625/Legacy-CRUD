@@ -1,5 +1,6 @@
 package com.spring.board.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,13 @@ public class boardServiceImpl implements boardService{
 		// TODO Auto-generated method stub
 		System.out.println("boardDelete service Start");
 		return boardDao.boardDelete(boardVo);
+	}
+
+	@Override
+	public List<BoardVo> typeBoardList(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("typeBoardList service Start");
+		return boardDao.typeBoardList(map);
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.spring.board.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.spring.board.vo.BoardVo;
@@ -20,5 +21,7 @@ public interface boardService {
 	public int boardUpdate(BoardVo boardVo) throws Exception;
 	
 	public int boardDelete(BoardVo boardVo) throws Exception;
+	
+	public List<BoardVo> typeBoardList(HashMap<String, Object> map) throws Exception;
 
 }

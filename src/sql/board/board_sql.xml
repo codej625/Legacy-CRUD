@@ -9,26 +9,57 @@
     	<result property="boardComment" column="BOARD_COMMENT"/>
     </resultMap>
     
-    <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
-        SELECT 
-		BOARD_TYPE
-		,BOARD_NUM
-		,BOARD_TITLE
-		,BOARD_COMMENT
-		,TOTAL_CNT
-		FROM 
+    <resultMap type="com.spring.board.vo.BoardVo" id="boardVo02">
+   		<result property="boardType"    column="CODE_NAME"/>
+    	<result property="boardNum" 	column="BOARD_NUM"/>
+    	<result property="boardTitle" 	column="BOARD_TITLE"/>
+    	<result property="boardComment" column="BOARD_COMMENT"/>
+    </resultMap>
+    
+    <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo02">
+    	SELECT 
+		  CODE_NAME
+		  ,BOARD_NUM
+		  ,BOARD_TITLE
+		  ,BOARD_COMMENT
+		  ,TOTAL_CNT
+		FROM
 		(
-		SELECT
-		BOARD_TYPE
-		,BOARD_NUM
-		,BOARD_TITLE
-		,BOARD_COMMENT
-		,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-		,COUNT(*) OVER() AS TOTAL_CNT
-		FROM BOARD	
+		  SELECT
+		     CODE_NAME
+				,BOARD_NUM
+				,BOARD_TITLE
+				,BOARD_COMMENT
+		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		      	,COUNT(*) OVER() AS TOTAL_CNT
+			FROM
+				BOARD A, COM_CODE B
+			WHERE
+				A.BOARD_TYPE = B.CODE_ID
+				AND code_id IN ('a01', 'a02','a03', 'a04')
+<!--         OR CODE_NAME = 'a04' -->
+<!--         OR CODE_NAME = 'a02' -->
 		)
-		WHERE 
-		NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+<!--         SELECT  -->
+<!-- 		BOARD_TYPE -->
+<!-- 		,BOARD_NUM -->
+<!-- 		,BOARD_TITLE -->
+<!-- 		,BOARD_COMMENT -->
+<!-- 		,TOTAL_CNT -->
+<!-- 		FROM  -->
+<!-- 		( -->
+<!-- 		SELECT -->
+<!-- 		BOARD_TYPE -->
+<!-- 		,BOARD_NUM -->
+<!-- 		,BOARD_TITLE -->
+<!-- 		,BOARD_COMMENT -->
+<!-- 		,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW -->
+<!-- 		,COUNT(*) OVER() AS TOTAL_CNT -->
+<!-- 		FROM BOARD	 -->
+<!-- 		) -->
+<!-- 		WHERE  -->
+<!-- 		NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10 -->
     </select>
     
     <select id="boardTotal" parameterType="Integer" resultType="Integer">
@@ -92,4 +123,38 @@
     	WHERE BOARD_TYPE = #{boardType}
   		AND   BOARD_NUM  = #{boardNum}  
     </delete>
+    
+    <select id="typeBoardList" parameterType="hashmap" resultMap="boardVo02">
+    	SELECT 
+		  CODE_NAME
+		  ,BOARD_NUM
+		  ,BOARD_TITLE
+		  ,BOARD_COMMENT
+		  ,TOTAL_CNT
+		FROM
+		(
+		  SELECT
+		     CODE_NAME
+				,BOARD_NUM
+				,BOARD_TITLE
+				,BOARD_COMMENT
+		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		      	,COUNT(*) OVER() AS TOTAL_CNT
+			FROM
+				BOARD A, COM_CODE B
+			WHERE
+				A.BOARD_TYPE = B.CODE_ID
+		<if test=" boardType != '' and boardType != null "> 
+				
+		AND code_id IN
+				
+        <foreach collection="boardType" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+		
+		</if>
+		)
+		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+    </select>
+    
 </mapper>
