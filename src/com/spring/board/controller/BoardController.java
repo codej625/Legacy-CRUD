@@ -39,22 +39,21 @@ public class BoardController {
 		// page가 0일경우 기본값을 1로 설정하기 위한 변수
 		int page = 1;
 		int totalCnt = 0;
-		// pageVo속에 PageNo가 0일경우 기본값을 변수 page로 설정
+		// pageVo속에 PageNo가 0일경우 기본값을 변수명 page를 set
 		if (pageVo.getPageNo() == 0) {
 			pageVo.setPageNo(page);  }
 		// checkbox를 선택하지 않고 조회 버튼을 누를시 typeSelect값이 null이기 때문에
-		
 		// 조건문을 주어 전체조회 페이지로 리턴시킨다.
-		if (typeSelect == null) {
+		if (typeSelect == null || typeSelect == "") {
 			map.put("boardType", typeSelect);
-			map.put("pageNo", pageVo.getPageNo());
+			map.put("pageNo"   , pageVo.getPageNo());
 			
 			boardList = boardService.selectBoardList(map);
 			totalCnt  = boardService.selectBoardCnt();
 
 			model.addAttribute("boardList", boardList);
-			model.addAttribute("totalCnt", totalCnt);
-			model.addAttribute("pageNo", page);
+			model.addAttribute("totalCnt" , totalCnt);
+			model.addAttribute("pageNo"   , page);
 
 			return "board/boardList";
 		} else {
@@ -62,15 +61,15 @@ public class BoardController {
 			String[] code_id = typeSelect.split(",");
 			// 동적 쿼리를 작성하기 위해 배열과 필요한 값을 맵에 넣어준다.
 			map.put("boardType", code_id);
-			map.put("pageNo", pageVo.getPageNo());
+			map.put("pageNo"   , pageVo.getPageNo());
 
 			boardList = boardService.selectBoardList(map);
-			totalCnt = boardService.selectBoardCnt();
+			totalCnt  = boardService.selectBoardCnt();
 
 			model.addAttribute("boardList", boardList);
-			model.addAttribute("totalCnt", totalCnt);
-			model.addAttribute("pageNo", page);
-
+			model.addAttribute("totalCnt" , totalCnt);
+			model.addAttribute("pageNo"   , page);
+  
 			return "board/boardList";
 		}
 	}
@@ -84,6 +83,7 @@ public class BoardController {
 		
 		// 조회버튼 사용시 Controller가 바뀌고 Mapper에서 설정해놓은 resultMap으로 인해 매칭 컬럼이 바뀌게 된다.
 		// 받아오는 boardType값이 code_name값으로 바뀌었기 때문에 값을 다시 변환해준다.
+		
 		 if (boardType.equals("일반")) {
 			boardType = "a01";
 		}if (boardType.equals("Q&A")) {
@@ -95,7 +95,7 @@ public class BoardController {
 
 		boardVo = boardService.selectBoard(boardType, boardNum);
 
-		model.addAttribute("board", boardVo);
+		model.addAttribute("board" , boardVo);
 		model.addAttribute("pageNo", pageVo.getPageNo());
 
 		return "board/boardView";
@@ -137,7 +137,7 @@ public class BoardController {
 		boardVo.setBoardNum(boardNum);
 		boardVo.setBoardType(boardType);
 
-		model.addAttribute("board", boardVo);
+		model.addAttribute("board" , boardVo);
 		model.addAttribute("pageNo", pageNo);
 
 		return "board/boardUpdate";
