@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import com.spring.board.dao.BoardDao;
 import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
+import com.spring.board.vo.ComVo;
+import com.spring.board.vo.PageVo;
+import com.spring.board.vo.UserVo;
 
 @Service
 public class boardServiceImpl implements boardService {
@@ -25,11 +28,11 @@ public class boardServiceImpl implements boardService {
 	}
 
 	@Override
-	public List<BoardVo> selectBoardList(HashMap<String, Object> map) throws Exception {
+	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("selectBoardList service Start");
 		
-		return boardDao.selectBoardList(map);
+		return boardDao.selectBoardList(pageVo);
 	}
 
 	@Override
@@ -74,6 +77,38 @@ public class boardServiceImpl implements boardService {
 		System.out.println("boardDelete service Start");
 		
 		return boardDao.boardDelete(boardVo);
+	}
+
+	@Override
+	public List<HashMap<String, String>> boardCheckbox(String check) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardCheckbox service Start");
+		
+		return boardDao.boardCheckbox(check);
+	}
+
+	@Override
+	public UserVo boardIdCheck(UserVo userVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardIdCheck service Start");
+		
+		return boardDao.boardIdCheck(userVo);
+	}
+
+	@Override
+	public List<ComVo> boardPhoneSelect(String phone) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardPhoneSelect service Start");
+		
+		return boardDao.boardPhoneSelect(phone);
+	}
+
+	@Override
+	public UserVo boardJoinInsert(UserVo userVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardJoinInsert service Start");
+		
+		return boardDao.boardJoinInsert(userVo);
 	}
 
 }

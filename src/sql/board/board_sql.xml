@@ -2,106 +2,131 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="board">
 
+	<resultMap type="com.spring.board.vo.ComVo" id="comVo">
+		<result     property="codeName"		column="CODE_NAME"/>
+    	<result     property="codeId"		column="CODE_ID"/>
+		<result     property="codeType"     column="CODE_TYPE" />
+	</resultMap>
+	
 	<resultMap type="com.spring.board.vo.BoardVo" id="boardVo">
-		<result property="boardType"    column="BOARD_TYPE" />
-		<result property="boardNum"     column="BOARD_NUM" />
-		<result property="boardTitle"   column="BOARD_TITLE" />
-		<result property="boardComment" column="BOARD_COMMENT" />
+		<result     property="boardType"    column="BOARD_TYPE" />
+		<result     property="boardNum"     column="BOARD_NUM" />
+		<result     property="boardTitle"   column="BOARD_TITLE" />
+		<result     property="boardComment" column="BOARD_COMMENT" />
+		<result     property="creator"      column="CREATOR" />
+		<result     property="modifier"     column="MODIFIER" />
+		<collection property="comVo"        resultMap="comVo"/>
+	</resultMap>
+	
+	<resultMap type="com.spring.board.vo.UserVo" id="userVo">
+		<result     property="userId"       column="USER_ID" />
+		<result     property="userPw"       column="USER_PW" />
+		<result     property="userName"     column="USER_NAME" />
+		<result     property="userPhone1"   column="USER_PHONE1" />
+		<result     property="userPhone2"   column="USER_PHONE2" />
+		<result     property="userPhone3"   column="USER_PHONE3" />
+		<result     property="userAddr1"    column="USER_ADDR1" />
+		<result     property="userAddr2"    column="USER_ADDR2" />
+		<result     property="userCompany"  column="USER_COMPANY" />
+		<result     property="creator"      column="CREATOR" />
+		<result     property="createTime"   column="CREATE_TIME" />
+		<result     property="modifier"     column="MODIFIER" />
+		<result     property="modifiedTime" column="MODIFIED_TIME" />
 	</resultMap>
 
-	<resultMap type="com.spring.board.vo.BoardVo" id="boardCom">
-		<result property="boardType"    column="CODE_NAME" />
-		<result property="boardNum"     column="BOARD_NUM" />
-		<result property="boardTitle"   column="BOARD_TITLE" />
-		<result property="boardComment" column="BOARD_COMMENT" />
-	</resultMap>
-
-	<select id="boardList" parameterType="hashmap" resultMap="boardCom">
+	<select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
 		SELECT
-		CODE_NAME
-		,BOARD_NUM
-		,BOARD_TITLE
-		,BOARD_COMMENT
-		,TOTAL_CNT
+			CODE_NAME
+			,BOARD_NUM
+			,BOARD_TYPE
+			,BOARD_TITLE
+			,BOARD_COMMENT
+			,TOTAL_CNT
 		FROM
-		(
-		SELECT
-		CODE_NAME
-		,BOARD_NUM
-		,BOARD_TITLE
-		,BOARD_COMMENT
-		,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-		,COUNT(*) OVER() AS TOTAL_CNT
-		FROM
-		BOARD A, COM_CODE B
-		WHERE
-		A.BOARD_TYPE = B.CODE_ID
-		<if test="boardType != '' and boardType != null">
-			AND code_id IN
-			<foreach collection="boardType" item="item" index="index" open="(" separator="," close=")">
-				#{item}
-			</foreach>
-		</if>
-		)
-		<if test="boardType == '' and boardType == null">
-		</if>
-		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+			(
+			SELECT
+				CODE_NAME
+				,BOARD_NUM
+				,BOARD_TYPE
+				,BOARD_TITLE
+				,BOARD_COMMENT
+				,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+				,COUNT(*) OVER() AS TOTAL_CNT
+				FROM
+				BOARD A, COM_CODE B
+				WHERE
+				A.BOARD_TYPE = B.CODE_ID
+				<if test="boardCheckbox != '' and boardCheckbox != null">
+					AND BOARD_TYPE IN
+					<foreach collection="boardCheckbox" item="item" index="index" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
+			WHERE
+				NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
 	</select>
 
 	<select id="boardTotal" parameterType="Integer" resultType="Integer">
-		SELECT
-		COUNT(*) AS TOTAL_CNT
-		FROM BOARD
+		SELECT COUNT(*) AS TOTAL_CNT
+		FROM   BOARD
 	</select>
 
 	<select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
 		SELECT
-		BOARD_TYPE
-		,BOARD_NUM
-		,BOARD_TITLE
-		,BOARD_COMMENT
+			BOARD_TYPE
+			,BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_COMMENT
 		FROM
-		BOARD
-		WHERE BOARD_TYPE = #{boardType}
-		AND BOARD_NUM    = #{boardNum}
+			BOARD A, COM_CODE B
+		WHERE
+			A.BOARD_TYPE = B.CODE_ID
+		AND BOARD_TYPE = #{boardType}
+		AND BOARD_NUM  = #{boardNum}
 	</select>
 
 	<select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
 		INSERT INTO
 		BOARD
-		(BOARD_TYPE
-		,BOARD_NUM
-		,BOARD_TITLE
-		,BOARD_COMMENT
-		,CREATOR
-		,CREATE_TIME
-		,MODIFIER
-		,MODIFIED_TIME
-		)
+			(
+			BOARD_TYPE
+			,BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_COMMENT
+			,CREATOR
+			,CREATE_TIME
+			,MODIFIER
+			,MODIFIED_TIME
+			)
 		VALUES
-		(#{boardType}
-		<!-- NVL 특정값을 치환시킬때 사용되는 함수 -->
-		<!-- BOARD_NUM의 값이 처음에 NULL이기 때문에 값을 0으로 치환 -->
-		,(SELECT NVL(MAX(BOARD_NUM),0)+1
-		FROM BOARD
-		WHERE BOARD_TYPE = #{boardType})
-		,#{boardTitle}
-		,#{boardComment}
-		,'SYSTEM'
-		,TO_CHAR(SYSDATE)
-		,'SYSTEM'
-		,TO_CHAR(SYSDATE)
-		)
+			(
+			#{boardType}
+			<!-- NVL 특정값을 치환시킬때 사용되는 함수 -->
+			<!-- BOARD_NUM의 값이 처음에 NULL이기 때문에 값을 0으로 치환 -->
+			,
+			(
+			SELECT NVL(MAX(BOARD_NUM),0)+1
+			FROM  BOARD
+			WHERE BOARD_TYPE = #{boardType}
+			)
+			,#{boardTitle}
+			,#{boardComment}
+			,'SYSTEM'
+			,TO_CHAR(SYSDATE)
+			,'SYSTEM'
+			,TO_CHAR(SYSDATE)
+			)
 	</select>
 
 	<update id="boardUpdate" parameterType="com.spring.board.vo.BoardVo">
 		UPDATE
 		BOARD SET
-		BOARD_TITLE    = #{boardTitle}
-		,BOARD_COMMENT = #{boardComment}
+			BOARD_TITLE    = #{boardTitle}
+			,BOARD_COMMENT = #{boardComment}
 		WHERE 
-		BOARD_TYPE     = #{boardType}
-		AND BOARD_NUM  = #{boardNum}
+			BOARD_TYPE     = #{boardType}
+		AND BOARD_NUM      = #{boardNum}
 	</update>
 
 	<delete id="boardDelete" parameterType="com.spring.board.vo.BoardVo">
@@ -111,4 +136,51 @@
 		AND   BOARD_NUM  = #{boardNum}
 	</delete>
 	
-</mapper>
+	<select id="boardCheckbox" parameterType="String" resultType="hashmap">
+		SELECT 
+			CODE_NAME
+			,CODE_ID
+		FROM COM_CODE
+		WHERE CODE_TYPE = #{check}
+	</select>
+	
+	<select id="boardIdCheck" parameterType="com.spring.board.vo.UserVo" resultMap="userVo">
+		SELECT USER_ID
+		FROM   USER_INFO
+		WHERE  USER_ID = #{userId}
+	</select>
+	
+	<select id="boardPhoneSelect" parameterType="String" resultMap="comVo">
+		SELECT CODE_NAME
+		FROM COM_CODE
+		WHERE CODE_TYPE = #{phone}
+	</select>
+	
+	<insert id="boardJoinInsert" parameterType="com.spring.board.vo.UserVo">
+		INSERT INTO 
+		USER_INFO
+				(
+				USER_ID
+				,USER_PW
+				,USER_NAME
+				,USER_PHONE1
+				,USER_PHONE2
+				,USER_PHONE3
+				,USER_ADDR1
+				,USER_ADDR2
+				,USER_COMPANY
+				) 
+		VALUES (
+				#{userId}
+				,#{userPw}
+				,#{userName}
+				,#{userPhone1}
+				,#{userPhone2}
+				,#{userPhone3}
+				,#{userAddr1}
+				,#{userAddr2}
+				,#{userCompany}
+				)
+	</insert>
+	
+</mapper> 	

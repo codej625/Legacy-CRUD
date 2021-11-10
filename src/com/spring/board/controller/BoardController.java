@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spring.board.HomeController;
 import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
+import com.spring.board.vo.ComVo;
 import com.spring.board.vo.PageVo;
+import com.spring.board.vo.UserVo;
 import com.spring.common.CommonUtil;
 
 @Controller
@@ -30,69 +33,35 @@ public class BoardController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@RequestMapping(value = "/board/boardList.do", method = { RequestMethod.GET, RequestMethod.POST })
-	public String boardTypeSelect(Model model, PageVo pageVo, String typeSelect) throws Exception {
+	public String boardTypeSelect(Model model, PageVo pageVo) throws Exception {
 
-		// Select 된 데이터를 담아서 View에서 for문을 실행하기 위한 List를 미리 생성
+		List<HashMap<String, String>> checkbox = null;
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
-		// checkbox값을 typeSelect이라는 배열속에 받고 동적 쿼리문을 사용하기위해 Map을 미리 생성
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		// page가 0일경우 기본값을 1로 설정하기 위한 변수
-		int page = 1;
+		int page     = 1;
 		int totalCnt = 0;
-		// pageVo속에 PageNo가 0일경우 기본값을 변수명 page를 set
+		String check = "menu";
+		
 		if (pageVo.getPageNo() == 0) {
 			pageVo.setPageNo(page);  }
-		// checkbox를 선택하지 않고 조회 버튼을 누를시 typeSelect값이 null이기 때문에
-		// 조건문을 주어 전체조회 페이지로 리턴시킨다.
-		if (typeSelect == null || typeSelect == "") {
-			map.put("boardType", typeSelect);
-			map.put("pageNo"   , pageVo.getPageNo());
-			
-			boardList = boardService.selectBoardList(map);
-			totalCnt  = boardService.selectBoardCnt();
 
-			model.addAttribute("boardList", boardList);
-			model.addAttribute("totalCnt" , totalCnt);
-			model.addAttribute("pageNo"   , page);
+		totalCnt  = boardService.selectBoardCnt();
+		checkbox  = boardService.boardCheckbox(check);
+		boardList = boardService.selectBoardList(pageVo);
 
-			return "board/boardList";
-		} else {
-			// checkbox값이 정상적으로 받아졌다면 typeSelect의 값을 "," 기준으로 자르고 새로운 배열속에 넣는다.
-			String[] code_id = typeSelect.split(",");
-			// 동적 쿼리를 작성하기 위해 배열과 필요한 값을 맵에 넣어준다.
-			map.put("boardType", code_id);
-			map.put("pageNo"   , pageVo.getPageNo());
+		model.addAttribute("pageVo"   , pageVo);
+		model.addAttribute("checkbox" , checkbox);
+		model.addAttribute("totalCnt" , totalCnt);
+		model.addAttribute("boardList", boardList);
 
-			boardList = boardService.selectBoardList(map);
-			totalCnt  = boardService.selectBoardCnt();
-
-			model.addAttribute("boardList", boardList);
-			model.addAttribute("totalCnt" , totalCnt);
-			model.addAttribute("pageNo"   , page);
-  
-			return "board/boardList";
-		}
+		return "board/boardList";
 	}
 
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
-	public String boardView(Locale locale, Model model, PageVo pageVo,
+	public String boardView(Locale locale, Model model, PageVo pageVo, 
 			@PathVariable("boardType") String boardType,
 			@PathVariable("boardNum")  int    boardNum) throws Exception {
 
 		BoardVo boardVo = new BoardVo();
-		
-		// 조회버튼 사용시 Controller가 바뀌고 Mapper에서 설정해놓은 resultMap으로 인해 매칭 컬럼이 바뀌게 된다.
-		// 받아오는 boardType값이 code_name값으로 바뀌었기 때문에 값을 다시 변환해준다.
-		
-		 if (boardType.equals("일반")) {
-			boardType = "a01";
-		}if (boardType.equals("Q&A")) {
-			boardType = "a02";
-		}if (boardType.equals("익명")) {
-			boardType = "a03";
-		}if (boardType.equals("자유")) {
-			boardType = "a04";        }
-
 		boardVo = boardService.selectBoard(boardType, boardNum);
 
 		model.addAttribute("board" , boardVo);
@@ -104,32 +73,24 @@ public class BoardController {
 	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
 	public String boardWrite(Locale locale, Model model, PageVo pageVo) throws Exception {
 
-		model.addAttribute("pageNo", pageVo.getPageNo());
+		String check = "menu";
+		List<HashMap<String, String>> checkbox = null;
+		
+		checkbox = boardService.boardCheckbox(check);
+
+		model.addAttribute("checkbox", checkbox);
+		model.addAttribute("pageNo"  , pageVo.getPageNo());
 
 		return "board/boardWrite";
 	}
 
-	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String boardWriteAction(Locale locale, BoardVo boardVo) throws Exception {
-
-		HashMap<String, String> result = new HashMap<String, String>();
-		CommonUtil commonUtil = new CommonUtil();
-		int resultCnt = boardService.boardInsert(boardVo);
-		result.put("success", (resultCnt > 0) ? "Y" : "N");
-		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
-		
-		System.out.println("callbackMsg::" + callbackMsg);
-
-		return callbackMsg;
-	}
 
 	@RequestMapping(value = "/board/{boardComment}/{boardTitle}/{pageNo}/{boardNum}/{boardType}/boardUpdate.do", method = RequestMethod.GET)
-	public String boardUpdate(@PathVariable("boardTitle")   String boardTitle,
-							  @PathVariable("boardComment") String boardComment,
-							  @PathVariable("pageNo")       String pageNo,
-							  @PathVariable("boardNum")     int    boardNum, 
-							  @PathVariable("boardType")    String boardType, Model model) throws Exception {
+	public String boardUpdate(@PathVariable("boardComment") String boardComment,
+							  @PathVariable("boardTitle") String boardTitle, 
+							  @PathVariable("pageNo") String pageNo,
+							  @PathVariable("boardNum") int boardNum, 
+							  @PathVariable("boardType") String boardType, Model model) throws Exception {
 
 		BoardVo boardVo = new BoardVo();
 		boardVo.setBoardComment(boardComment);
@@ -142,17 +103,34 @@ public class BoardController {
 
 		return "board/boardUpdate";
 	}
+	
+	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
+	@ResponseBody
+	public String boardWriteAction(Locale locale, BoardVo boardVo) throws Exception {
+		
+		CommonUtil commonUtil = new CommonUtil();
+		HashMap<String, String> result = new HashMap<String, String>();
+		
+		int resultCnt = boardService.boardInsert(boardVo);
+		result.put("success", (resultCnt > 0) ? "Y" : "N");
+		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
+		
+		System.out.println("callbackMsg::" + callbackMsg);
+		
+		return callbackMsg;
+	}
 
 	@RequestMapping(value = "/board/boardUpdateAction.do", method = RequestMethod.POST)
 	@ResponseBody
 	public String boardUpdateAction(BoardVo boardVo) throws Exception {
 
-		HashMap<String, String> result = new HashMap<String, String>();
 		CommonUtil commonUtil = new CommonUtil();
+		HashMap<String, String> result = new HashMap<String, String>();
+		
 		int resultCnt = boardService.boardUpdate(boardVo);
 		result.put("success", (resultCnt > 0) ? "Y" : "N");
 		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
-		
+
 		System.out.println("callbackMsg::" + callbackMsg);
 
 		return callbackMsg;
@@ -160,17 +138,64 @@ public class BoardController {
 
 	@RequestMapping(value = "/board/boardDelete.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String boardDelete(BoardVo boardVo) throws Exception {
+	public Map<String, String> boardDelete(BoardVo boardVo) throws Exception {
 
-		HashMap<String, String> result = new HashMap<String, String>();
 		CommonUtil commonUtil = new CommonUtil();
+		HashMap<String, String> result = new HashMap<String, String>();
+		
 		int resultCnt = boardService.boardDelete(boardVo);
 		result.put("success", (resultCnt > 0) ? "Y" : "N");
-		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
-		
-		System.out.println("callbackMsg::" + callbackMsg);
 
-		return callbackMsg;
+		System.out.println("callbackMsg::" + result.get("success"));
+
+		return result;
 	}
+	
+	@RequestMapping(value = "/board/boardJoin.do", method = RequestMethod.GET)
+	public String boardJoin(Model model) throws Exception {
+		List<ComVo> phoneSelect = null;
+		String phone = "phone";
+		
+		phoneSelect = boardService.boardPhoneSelect(phone);
+		
+		model.addAttribute("select", phoneSelect);
+		return "/board/boardJoin";
+	}
+	
+	@RequestMapping(value = "/board/boardIdCheck.do", method = RequestMethod.POST)
+	@ResponseBody
+	public String boardIdCheck(UserVo userVo) throws Exception {
+		
+		// id에 대한 유효성 검사를 서버에서 한번 더 실행
+		boolean regExp = userVo.getUserId().matches("^[a-zA-Z0-9]*$");
+	    String message = null;
+		
+	    // 아이디를 조회
+	    UserVo boardId = boardService.boardIdCheck(userVo);
+	    
+	    // 조회된 데이터가 없다면 회원가입
+		if (boardId == null) {
+			// 정규식 조건이 맞으면 회원가입 가능
+			if (regExp == true) {
+				message = "success";
+			// 정규식 조건이 맞지 않으면 회원가입 불가능
+			} else if (regExp == false) {
+				message = "fail";
+			}
+		// 조회된 데이터가 있으면 회원가입 불가능
+		} else if (boardId != null) {
+			message = "fail";
+		}
+		// 결과 값을 리턴
+	    return message;
+	}
+	
+	@RequestMapping(value = "/board/boardUserJoin.do", method = RequestMethod.POST)
+	public String boardJoinInsert(UserVo userVo) throws Exception {
 
+		//회원정보 insert
+		boardService.boardJoinInsert(userVo);
+		
+		return "redirect:/board/boardList.do";
+	}
 }

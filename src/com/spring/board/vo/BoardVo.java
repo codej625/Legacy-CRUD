@@ -3,12 +3,22 @@ package com.spring.board.vo;
 public class BoardVo {
 
 	private String boardType;
-	private int boardNum;
+	private int    boardNum;
 	private String boardTitle;
 	private String boardComment;
 	private String creator;
 	private String modifier;
 	private int totalCnt;
+	
+	private ComVo comVo;
+
+	public ComVo getComVo() {
+		return comVo;
+	}
+
+	public void setComVo(ComVo comVo) {
+		this.comVo = comVo;
+	}
 
 	public int getTotalCnt() {
 		return totalCnt;

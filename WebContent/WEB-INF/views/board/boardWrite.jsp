@@ -20,10 +20,9 @@
 						<td width="120" align="center">Type</td>
 						<td>
 							<select name="boardType">
-								<option value="a01">일반</option>
-								<option value="a02">Q&A</option>
-								<option value="a03">익명</option>
-								<option value="a04">자유</option>
+								<c:forEach items="${checkbox}" var="check">
+									<option value="${check.CODE_ID}">${check.CODE_NAME}</option>
+								</c:forEach>
 							</select>
 						</td>
 					</tr>
@@ -49,7 +48,6 @@
 </form>
 <script type="text/javascript">
 	$j(document).ready(function() {
-
 		$j("#submit").on("click", function() {
 			var $frm = $j('.boardWrite :input');
 			var param = $frm.serialize();

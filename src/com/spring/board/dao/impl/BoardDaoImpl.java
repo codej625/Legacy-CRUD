@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import com.spring.board.dao.BoardDao;
 import com.spring.board.vo.BoardVo;
+import com.spring.board.vo.ComVo;
 import com.spring.board.vo.PageVo;
+import com.spring.board.vo.UserVo;
 
 @Repository
 public class BoardDaoImpl implements BoardDao {
@@ -28,11 +30,11 @@ public class BoardDaoImpl implements BoardDao {
 	}
 
 	@Override
-	public List<BoardVo> selectBoardList(HashMap<String, Object> map) throws Exception {
+	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("selectBoardList dao Start");
 
-		return sqlSession.selectList("board.boardList", map);
+		return sqlSession.selectList("board.boardList", pageVo);
 	}
 
 	@Override
@@ -73,6 +75,38 @@ public class BoardDaoImpl implements BoardDao {
 		System.out.println("boardDelete dao Start");
 
 		return sqlSession.delete("board.boardDelete", boardVo);
+	}
+
+	@Override
+	public List<HashMap<String, String>> boardCheckbox(String check) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardCheckbox dao Start");
+		
+		return sqlSession.selectList("board.boardCheckbox", check);
+	}
+
+	@Override
+	public UserVo boardIdCheck(UserVo userVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardIdCheck dao Start");
+		
+		return sqlSession.selectOne("board.boardIdCheck", userVo);
+	}
+
+	@Override
+	public List<ComVo> boardPhoneSelect(String phone) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardPhoneSelect dao Start");
+		
+		return sqlSession.selectList("boardPhoneSelect", phone);
+	}
+
+	@Override
+	public UserVo boardJoinInsert(UserVo userVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardJoinInsert dao Start");
+		
+		return sqlSession.selectOne("boardJoinInsert", userVo);
 	}
 
 }
