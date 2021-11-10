@@ -15,9 +15,9 @@
 			</tr>
 			<tr>
 				<td>
-					<table border="1">
+					<table border="1" width="440">
 						<tr>
-							<td align="center">id</td>
+							<td align="center" width="100">id</td>
 							<td>
 								<input type="text" name="userId" id="id" maxlength="15">
 								<button type="button" id="btnConfirm">중복확인</button>
@@ -275,7 +275,7 @@
 	            flag = false;
 		    } else {
 	            $j('#pw_check').css('color', 'blue')
-	            $j('#pw_check').html("비밀번호가 동일합니다.")
+	            $j('#pw_check').html('')
 	            // 조건에 맞으면 숨겨놓은 이미지를 띄어줌
 	            $j('#image').show();
 	            flag = true;
