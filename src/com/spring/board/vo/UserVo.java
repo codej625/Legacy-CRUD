@@ -95,5 +95,4 @@ public class UserVo {
 		this.modifiedTime = modifiedTime;
 	}
 	
-	
 }

@@ -50,6 +50,7 @@
 	$j(document).ready(function() {
 		$j("#submit").on("click", function() {
 			var $frm = $j('.boardWrite :input');
+			// serialize() 직렬화를 시켜주는 함수. 입력받은 여러 데이터를 하나의 쿼리 문자열로 만들어줌
 			var param = $frm.serialize();
 
 			$j.ajax({

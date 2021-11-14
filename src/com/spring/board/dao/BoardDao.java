@@ -30,6 +30,8 @@ public interface BoardDao {
 	
 	public List<HashMap<String, String>> boardCheckbox(String check) throws Exception;
 	
-	public UserVo boardJoinInsert(UserVo userVo) throws Exception;
+	public int boardJoinInsert(UserVo userVo) throws Exception;
+	
+	public UserVo boardLogin(UserVo userVo)  throws Exception;
 
 }

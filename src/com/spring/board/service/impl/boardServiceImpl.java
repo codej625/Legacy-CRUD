@@ -104,11 +104,19 @@ public class boardServiceImpl implements boardService {
 	}
 
 	@Override
-	public UserVo boardJoinInsert(UserVo userVo) throws Exception {
+	public int boardJoinInsert(UserVo userVo) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("boardJoinInsert service Start");
 		
 		return boardDao.boardJoinInsert(userVo);
+	}
+
+	@Override
+	public UserVo boardLogin(UserVo userVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardLogin service Start");
+		
+		return boardDao.boardLogin(userVo);
 	}
 
 }

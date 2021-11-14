@@ -102,11 +102,19 @@ public class BoardDaoImpl implements BoardDao {
 	}
 
 	@Override
-	public UserVo boardJoinInsert(UserVo userVo) throws Exception {
+	public int boardJoinInsert(UserVo userVo) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("boardJoinInsert dao Start");
 		
-		return sqlSession.selectOne("boardJoinInsert", userVo);
+		return sqlSession.insert("boardJoinInsert", userVo);
+	}
+
+	@Override
+	public UserVo boardLogin(UserVo userVo) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("boardLogin dao Start");
+		
+		return sqlSession.selectOne("boardLogin", userVo);
 	}
 
 }

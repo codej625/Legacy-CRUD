@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.boardService;
@@ -159,9 +164,10 @@ public class BoardController {
 		phoneSelect = boardService.boardPhoneSelect(phone);
 		
 		model.addAttribute("select", phoneSelect);
-		return "/board/boardJoin";
+		return "board/boardJoin";
 	}
 	
+	// id 중복 검사 기능
 	@RequestMapping(value = "/board/boardIdCheck.do", method = RequestMethod.POST)
 	@ResponseBody
 	public String boardIdCheck(UserVo userVo) throws Exception {
@@ -190,12 +196,63 @@ public class BoardController {
 	    return message;
 	}
 	
+	// 회원가입 insert or 방금 회원가입한 아이디 조회
 	@RequestMapping(value = "/board/boardUserJoin.do", method = RequestMethod.POST)
-	public String boardJoinInsert(UserVo userVo) throws Exception {
-
-		//회원정보 insert
-		boardService.boardJoinInsert(userVo);
+	@ResponseBody
+	public Map<String, String> boardJoinInsert(UserVo userVo) throws Exception {
+		Map<String, String> result = new HashMap<String, String>();
+		int resultCnt = 0;
 		
-		return "redirect:/board/boardList.do";
+		resultCnt = boardService.boardJoinInsert(userVo);
+		
+		result.put("success", (resultCnt > 0) ? "Y" : "N");
+		
+		return result;
+	}
+	
+	// 로그인
+	@RequestMapping(value = "/board/boardLogin.do", method = RequestMethod.GET)
+	public String boardLogin() throws Exception { return "board/boardLogin"; }
+	
+	// 로그아웃
+	@RequestMapping(value = "/board/boardLogout.do", method = RequestMethod.GET)
+	public String boardLogin(HttpSession session) throws Exception {
+		session.invalidate();
+		return "redirect:/board/boardList.do"; }
+	
+	// 로그인 후 로직
+	@RequestMapping(value = "/board/boardLogin.do", method = RequestMethod.POST)
+	public String boardUserLogin(UserVo userVo, HttpServletRequest req, RedirectAttributes rttr, Model model) throws Exception {
+		
+		// user가 입력한 값을 userVo에 받고 userId, userPw 변수에 값을 대입
+		String userId = userVo.getUserId();
+		String userPw = userVo.getUserPw();
+		// 세션 처리
+		HttpSession session = req.getSession();
+		// null값을 받아 처리하기 위한 try_catch문
+		try {
+			// userVo에서 받아온 id로 아이디를 찾은후 입력한 id와 pw를 비교
+			userVo = boardService.boardLogin(userVo);
+			// 값을 비교후 userId 와 userPw가 맞으면 boardList로 redirect
+			if (userId.equals(userVo.getUserId()) && userPw.equals(userVo.getUserPw())) {
+				String uesrIdCheck = userVo.getUserId();
+				session.setAttribute("session", userVo);
+				// redirect는 GET method를 사용하여 전송되기 때문에 RedirectAttributes을 사용한다.
+				// model로 전송할시 주소값에 parameter value을 남기기 때문에 보안을 위해 사용
+				rttr.addFlashAttribute("result", uesrIdCheck);
+				return "redirect:/board/boardList.do";
+			}
+			// 아이디가 조회 되었어도 비밀번호가 틀림
+			else if (!userPw.equals(userVo.getUserPw())) {
+				String userPwCheck = "userPw";
+				model.addAttribute("result", userPwCheck);
+			}
+		// 아이디 잘못 입력 하여 null값이 조회되었을때 예외처리
+		} catch (NullPointerException e) {
+			String uesrIdCheck = "userId";
+			model.addAttribute("result", uesrIdCheck);
+		}
+		// 정상 로그인 외에 return 되는 view
+		return "board/boardLogin";
 	}
 }

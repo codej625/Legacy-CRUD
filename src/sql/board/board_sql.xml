@@ -169,6 +169,10 @@
 				,USER_ADDR1
 				,USER_ADDR2
 				,USER_COMPANY
+				,CREATOR
+				,CREATE_TIME
+				,MODIFIER
+				,MODIFIED_TIME
 				) 
 		VALUES (
 				#{userId}
@@ -178,9 +182,21 @@
 				,#{userPhone2}
 				,#{userPhone3}
 				,#{userAddr1}
-				,#{userAddr2}
-				,#{userCompany}
+				,#{userAddr2,    jdbcType = VARCHAR}
+				,#{userCompany,  jdbcType = VARCHAR}
+				,#{creator,      jdbcType = VARCHAR}
+				,#{createTime,   jdbcType = VARCHAR}
+				,#{modifier,     jdbcType = VARCHAR}
+				,#{modifiedTime, jdbcType = VARCHAR}
 				)
 	</insert>
+	<select id="boardLogin" parameterType="com.spring.board.vo.UserVo" resultMap="userVo">
+		SELECT
+		  	*
+		FROM
+		  	USER_INFO
+		WHERE
+			USER_ID = #{userId}
+	</select>
 	
 </mapper> 	
