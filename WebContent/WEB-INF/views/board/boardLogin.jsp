@@ -36,12 +36,18 @@
 				<td>
 			</tr>
 			<tr>
-				<td align="right" id="submit">join</td>
+				<td align="right">
+					<table>
+						<tr>
+							<td><a style="margin-right: 3px;" href="/board/boardJoin.do">join</a></td>
+							<td id="submit">login</td>
+						</tr>
+					</table>
+				</td>
 			</tr>
 		</table>
 	</form>
 	<script type="text/javascript">
-	
 		// form input
 		$j('#submit').click(function() {
 			$j('#form').submit();
@@ -85,7 +91,6 @@
 			}
 			return true;
 		}
-		
 	</script>
 </body>
 </html>
