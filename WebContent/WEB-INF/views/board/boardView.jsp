@@ -8,40 +8,44 @@
 <title>boardView</title>
 </head>
 <body>
-<form class="boardDelete">
-	<input type="hidden" name="boardNum"  value="${board.boardNum}">
-	<input type="hidden" name="boardType" value="${board.boardType}">
-	<table align="center">
-		<tr>
-			<td align="right">
-				<input id="submit" type="button" value="삭제">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table border="1">
-					<tr>
-						<td width="120" align="center">Title</td>
-						<td width="400">${board.boardTitle}</td>
-					</tr>
-					<tr>
-						<td height="300" align="center">Comment</td>
-						<td>${board.boardComment}</td>
-					</tr>
-					<tr>
-						<td align="center">Writer</td>
-						<td></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td align="right"><a href="/board/boardList.do">List</a> 
-			<a href="/board/${board.boardComment}/${board.boardTitle}/${pageNo}/${board.boardNum}/${board.boardType}/boardUpdate.do">Update</a></td>
-		</tr>
-	</table>
-</form>
-<script type="text/javascript">
+	<form class="boardDelete">
+		<input type="hidden" name="boardNum" value="${board.boardNum}">
+		<input type="hidden" name="boardType" value="${board.boardType}">
+		<table align="center">
+			<c:if test="${session ne null}">
+				<tr>
+					<td align="right"><input id="submit" type="button" value="삭제"></td>
+				</tr>
+			</c:if>
+			<tr>
+				<td>
+					<table border="1">
+						<tr>
+							<td width="120" align="center">Title</td>
+							<td width="400">${board.boardTitle}</td>
+						</tr>
+						<tr>
+							<td height="300" align="center">Comment</td>
+							<td>${board.boardComment}</td>
+						</tr>
+						<tr>
+							<td align="center">Writer</td>
+							<td></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">
+					<a href="/board/boardList.do">List</a>
+					<c:if test="${session ne null}">
+						<a href="/board/${board.boardComment}/${board.boardTitle}/${pageNo}/${board.boardNum}/${board.boardType}/boardUpdate.do">Update</a>
+					</c:if>
+				</td>
+			</tr>
+		</table>
+	</form>
+	<script type="text/javascript">
 	$j(document).ready(function() {
 
 		$j("#submit").on("click", function() {
