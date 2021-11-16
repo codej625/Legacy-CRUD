@@ -30,7 +30,11 @@
 						</tr>
 						<tr>
 							<td align="center">Writer</td>
-							<td></td>
+							<td>
+								<c:if test="${session ne null}">
+									${session.userId}
+								</c:if>
+							</td>
 						</tr>
 					</table>
 				</td>
