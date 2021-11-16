@@ -48,7 +48,7 @@
 		<c:if test="${session ne null}">
 			<tr>
 				<td align="right">
-					<a href="/board/boardJoin.do">글쓰기</a> 
+					<a href="/board/boardWrite.do">글쓰기</a> 
 					<a href="/board/boardLogout.do">로그아웃</a>
 				</td>
 			</tr>
