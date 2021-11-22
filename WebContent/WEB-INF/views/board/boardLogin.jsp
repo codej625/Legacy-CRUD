@@ -15,7 +15,7 @@
 	</c:if>
 	<c:if test="${result eq 'userId'}">
 		<script type="text/javascript">
-			alert('아이디를 정확히 입력해주세요.')
+			alert('없는 아이디 입니다.')
 		</script>
 	</c:if>
 	<!-- form을 submit할때 checks함수 실행 -->
