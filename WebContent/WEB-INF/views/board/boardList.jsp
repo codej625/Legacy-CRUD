@@ -29,6 +29,7 @@
 		</tr>
 		<tr>
 			<td>
+				<c:set var="num" value="${pg.total-pg.start+1}"></c:set>
 				<table id="boardTable" border="1">
 					<tr>
 						<td width="80" align="center">Type</td>
@@ -41,8 +42,22 @@
 							<td>${list.boardNum}</td>
 							<td><a href="/board/${list.boardType}/${list.boardNum}/boardView.do?pageNo=${pageVo.pageNo}">${list.boardTitle}</a></td>
 						</tr>
+						<c:set var="num" value="${num - 1 }"></c:set>
 					</c:forEach>
 				</table>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<c:if test="${pg.startPage > pg.pageBlock }">
+					<a href="/board/boardList.do?currentPage=${pg.startPage-pg.pageBlock}">[이전]</a>
+				</c:if> 
+				<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
+					<a href="/board/boardList.do?currentPage=${i}">[${i}]</a>
+				</c:forEach> 
+				<c:if test="${pg.endPage < pg.totalPage }">
+					<a href="/board/boardList.do?currentPage=${pg.startPage+pg.pageBlock}">[다음]</a>
+				</c:if>
 			</td>
 		</tr>
 		<c:if test="${session ne null}">

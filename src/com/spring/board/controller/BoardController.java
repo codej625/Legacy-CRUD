@@ -25,6 +25,7 @@ import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.ComVo;
 import com.spring.board.vo.PageVo;
+import com.spring.board.vo.Paging;
 import com.spring.board.vo.UserVo;
 import com.spring.common.CommonUtil;
 
@@ -41,18 +42,21 @@ public class BoardController {
 
 		List<HashMap<String, String>> checkbox = null;
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
-		int page     = 1;
+		
 		int totalCnt = 0;
+		String CurrentPage = "";
+		totalCnt  = boardService.selectBoardCnt(pageVo);
+		CurrentPage = pageVo.getCurrentPage();
+		Paging pageService = new Paging(totalCnt, CurrentPage);
+		
 		String check = "menu";
 		
-		if (pageVo.getPageNo() == 0) {
-			pageVo.setPageNo(page);  }
-
-		totalCnt  = boardService.selectBoardCnt();
+		pageVo.setStart(pageService.getStart());   // 시작시 1
+		pageVo.setEnd(pageService.getEnd());       // 시작시 10 
 		checkbox  = boardService.boardCheckbox(check);
 		boardList = boardService.selectBoardList(pageVo);
 
-		model.addAttribute("pageVo"   , pageVo);
+		model.addAttribute("pg"       , pageService);
 		model.addAttribute("checkbox" , checkbox);
 		model.addAttribute("totalCnt" , totalCnt);
 		model.addAttribute("boardList", boardList);

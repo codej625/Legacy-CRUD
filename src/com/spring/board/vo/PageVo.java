@@ -1,25 +1,20 @@
 package com.spring.board.vo;
 
-public class PageVo extends BoardVo {
+import lombok.Getter;
+import lombok.Setter;
 
-	private int pageNo = 0;
+@Getter
+@Setter
+public class PageVo {
 
+	// 조회용
+	private String search;
+	private int    pageNo;
+	private String keyword;
+	private String pageNum;  
+	private int start; 		 
+	private int end;
 	private String[] boardCheckbox;
-
-	public String[] getBoardCheckbox() {
-		return boardCheckbox;
-	}
-
-	public void setBoardCheckbox(String[] boardCheckbox) {
-		this.boardCheckbox = boardCheckbox;
-	}
-
-	public int getPageNo() {
-		return pageNo;
-	}
-
-	public void setPageNo(int pageNo) {
-		this.pageNo = pageNo;
-	}
+	private String currentPage;
 
 }

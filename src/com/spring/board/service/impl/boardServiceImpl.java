@@ -36,11 +36,11 @@ public class boardServiceImpl implements boardService {
 	}
 
 	@Override
-	public int selectBoardCnt() throws Exception {
+	public int selectBoardCnt(PageVo pageVo) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("selectBoardCnt service Start");
 		
-		return boardDao.selectBoardCnt();
+		return boardDao.selectBoardCnt(pageVo);
 	}
 
 	@Override

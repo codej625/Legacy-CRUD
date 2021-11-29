@@ -64,12 +64,20 @@
 				</if>
 				)
 			WHERE
-				NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+<!-- 				NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10 -->
+				NUMROW BETWEEN (#{start}-1) + 1 AND (#{end})
 	</select>
 
-	<select id="boardTotal" parameterType="Integer" resultType="Integer">
+	<select id="boardTotal" parameterType="com.spring.board.vo.PageVo" resultType="Integer">
 		SELECT COUNT(*) AS TOTAL_CNT
 		FROM   BOARD
+			<if test="boardCheckbox != '' and boardCheckbox != null">
+				WHERE 				
+					BOARD_TYPE IN
+				<foreach collection="boardCheckbox" item="item" index="index" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
 	</select>
 
 	<select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
