@@ -224,7 +224,7 @@ public class BoardController {
 		return "redirect:/board/boardList.do"; }
 	
 	// 로그인 후 로직
-	@RequestMapping(value = "/board/boardLogin.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/board/boardLoginAction.do", method = RequestMethod.GET)
 	public String boardUserLogin(UserVo userVo, HttpServletRequest req, RedirectAttributes rttr, Model model) throws Exception {
 		
 		// user가 입력한 값을 userVo에 받고 userId, userPw 변수에 값을 대입
@@ -240,8 +240,6 @@ public class BoardController {
 			if (userId.equals(userVo.getUserId()) && userPw.equals(userVo.getUserPw())) {
 				String uesrIdCheck = userVo.getUserId();
 				session.setAttribute("session", userVo);
-				// redirect는 GET method를 사용하여 전송되기 때문에 RedirectAttributes을 사용한다.
-				// model로 전송할시 주소값에 parameter value을 남기기 때문에 보안을 위해 사용
 				rttr.addFlashAttribute("result", uesrIdCheck);
 				return "redirect:/board/boardList.do";
 			}

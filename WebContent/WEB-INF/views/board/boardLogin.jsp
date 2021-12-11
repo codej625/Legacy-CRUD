@@ -19,7 +19,7 @@
 		</script>
 	</c:if>
 	<!-- form을 submit할때 checks함수 실행 -->
-	<form action="/board/boardLogin.do" method="post" id="form" onsubmit="return checks()">
+	<form action="/board/boardLoginAction.do" id="form" onsubmit="return checks()">
 		<table align="center" style="margin-top: 100px;">
 			<tr>
 				<td>
